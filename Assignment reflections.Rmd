@@ -6,13 +6,7 @@ output: html_document
 ---
 
 Make an interactive dashboards with Shiny
-
-# Basic appearance
-  1. Add Island Health Logo
-  2. Separate top-level plots
-  3. Use island health guidline https://www.canva.com/design/DAEt88AGp2E/_zYlbG0FHLLbw2EwFkZLBw/view?website#2:department-wordmarks 
-  
-  
+ 
 ```{r, echo=FALSE, warning=FALSE, error=FALSE, message=FALSE}
 #packages
 library(DBI)
