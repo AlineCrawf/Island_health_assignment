@@ -1,0 +1,13 @@
+.tab-pane .row {
+    display: flex;
+    gap: 10px;
+}
+
+.tab-pane .row .col-sm-4 {
+    float: initial !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}

@@ -3,6 +3,9 @@ library(shinydashboard)
 
 # Define UI
 ui <- dashboardPage(
+  tags$head(
+    tags$link(rel = "stylesheet", type = "text/css", href = "fix.css")
+  ),
   dashboardHeader(
     title = "Island Health",
     tags$li(
