@@ -44,31 +44,11 @@ ui <- dashboardPage(
           selectInput("floor_filter", "Floor", choices = NULL),
           selectInput("result_filter", "Result", choices = NULL)
         ),
-        column(width = 6,
+        column(width = 5,
                plotOutput("treatment_plot")),
-        column(width = 4,
+        column(width = 5,
                plotOutput("treatment_100_plot"))
-      ),
-      
-      fluidRow(column(
-        width = 12,
-        h4("Note:"),
-        p(
-          "Considering the effectiveness of different treatments is crucial in providing optimal care for patients. By analyzing the treatment outcomes based on various factors such as disease, hospital, age group, floor, and result, healthcare providers can make informed decisions to improve treatment strategies and patient outcomes."
-        ),
-        p(
-          "It is important to assess the effectiveness of treatments on different floors within the same hospital. Identifying any discrepancies in treatment outcomes can help pinpoint areas that require further attention and improvement."
-        ),
-        p(
-          "For example, when treating",
-          HTML("<b>MRSA</b>"),
-          "at",
-          HTML("<b>Goldvalley Medical Clinic</b>"),
-          ", the 3rd floor shows",
-          HTML("<b>an 82% proportion of negative results</b>"),
-          ", while the remaining floors range from 58% to 75%. This suggests the need for further investigation and potential improvement measures on those specific floors to ensure optimal treatment outcomes."
-        )
-      ))
+      )
     ),
     tabItem(
       tabName = "page2",

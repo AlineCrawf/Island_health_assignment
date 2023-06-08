@@ -63,13 +63,13 @@ server <- function(input, output, session) {
            xlab = "Floor", ylab = "Count",
            main = "Count of Unique Patient Identifiers by Floor and Bed")
     } else {
-      df_count <- aggregate(patient_identifier ~ floor + bed, filteredData(), FUN = function(x) length(unique(x)))
+      df_count <- aggregate(patient_identifier ~ floor + result, filteredData(), FUN = function(x) length(unique(x)))
       
-      ggplot(df_count, aes(x = floor, y = patient_identifier, fill = bed)) +
+      ggplot(df_count, aes(x = floor, y = patient_identifier, fill = result)) +
         geom_bar(stat = "identity", position = "dodge") +
         scale_fill_manual(values = c("#00395B","#006AA8", "#66A6CB", "#99C3DC", "#00acba")) +
         labs(title = "Count of Unique Patient Identifiers by Floor and Bed",
-             x = "Floor", y = "Count", fill = "Bed")
+             x = "Floor", y = "Count", fill = "Result")
     }
   })
   
@@ -120,6 +120,8 @@ server <- function(input, output, session) {
         geom_col() +
         labs(title = "Count of Unique Patients by Treatment",
              x = "Treatment", y = "Count") +
+        theme(legend.position = "top") +
+        scale_fill_manual(values = c("#00395B","#99C3DC")) +
         guides(fill = guide_legend(reverse = TRUE))
     }
   })
@@ -142,7 +144,8 @@ server <- function(input, output, session) {
         geom_bar(stat = "identity", position = "fill") +
         labs(title = "Percentage of Patients by Treatment",
              x = "Treatment", y = "Percentage") +
-        theme(legend.position = "bottom") +
+        theme(legend.position = "top") +
+        scale_fill_manual(values = c("#00395B","#99C3DC")) +
         coord_flip()
     }
   })
