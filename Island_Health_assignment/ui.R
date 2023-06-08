@@ -36,15 +36,17 @@ ui <- dashboardPage(
       ),
       fluidRow(
         column(
-          width = 3,
+          width = 2,
           selectInput("disease_filter", "Disease", choices = NULL),
           selectInput("hospital_filter", "Hospital", choices = NULL),
           selectInput("age_group_filter", "Age Group", choices = NULL),
           selectInput("floor_filter", "Floor", choices = NULL),
           selectInput("result_filter", "Result", choices = NULL)
         ),
-        column(width = 9,
-               plotOutput("treatment_plot"))
+        column(width = 6,
+               plotOutput("treatment_plot")),
+        column(width = 4,
+               plotOutput("treatment_100_plot"))
       ),
       
       fluidRow(column(

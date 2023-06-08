@@ -128,20 +128,22 @@ server <- function(input, output, session) {
     if (nrow(filteredData2()) == 0) {
       # Display an empty plot if no data is available
       plot(NULL, xlim = c(0, 1), ylim = c(0, 1),
-           xlab = "Count", ylab = "Treatment",
-           main = "Count of Unique Patients by Treatment")
+           xlab = "Treatment", ylab = "Percentage",
+           main = "Percentage of Patients by Treatment")
     } else {
-      df_count <- aggregate(patient_identifier ~ result + treatment, 
-                            filteredData2(), FUN = function(x) length(unique(x)))
+      df_count <- aggregate(patient_identifier ~ result + treatment, filteredData2(), FUN = function(x) length(unique(x)))
+      
       df_count <- df_count %>%
-        arrange(desc(patient_identifier)) # Sort by max patients
+        arrange(desc(patient_identifier))
       
+      df_percent <- transform(df_count, percentage = patient_identifier / sum(patient_identifier) * 100)
       
-      ggplot(df_count, aes(x = patient_identifier, y = treatment, fill = result)) +
-        geom_col() +
-        labs(title = "Count of Unique Patients by Treatment",
-             x = "Treatment", y = "Count") +
-        guides(fill = guide_legend(reverse = TRUE))
+      ggplot(df_percent, aes(x = treatment, y = percentage, fill = result)) +
+        geom_bar(stat = "identity", position = "fill") +
+        labs(title = "Percentage of Patients by Treatment",
+             x = "Treatment", y = "Percentage") +
+        theme(legend.position = "bottom") +
+        coord_flip()
     }
   })
   
