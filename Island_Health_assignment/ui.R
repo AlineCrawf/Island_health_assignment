@@ -3,7 +3,6 @@ library(shinydashboard)
 
 # Define UI
 ui <- dashboardPage(
-  includeCSS("fix.css"),
   dashboardHeader(
     title = "Island Health",
     tags$li(
@@ -18,6 +17,9 @@ ui <- dashboardPage(
     menuItem("Candidat info", tabName = "infopage")
   )),
   dashboardBody(
+    tags$head(
+      tags$link(rel = "stylesheet", type = "text/css", href = "fix.css")
+    ),
     tabItems(tabItem(
       tabName = "page1",
       h2("Treatment Overview"),
