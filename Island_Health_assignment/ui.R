@@ -17,9 +17,7 @@ ui <- dashboardPage(
     menuItem("Candidat info", tabName = "infopage")
   )),
   dashboardBody(
-    tags$head(
-      tags$link(rel = "stylesheet", type = "text/css", href = "fix.css")
-    ),
+    includeCSS("fix.css"),
     tabItems(tabItem(
       tabName = "page1",
       h2("Treatment Overview"),
