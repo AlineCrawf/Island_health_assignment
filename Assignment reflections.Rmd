@@ -1,0 +1,176 @@
+---
+title: "Assignment reflections"
+author: "Alina Tkachenko"
+date: "2023-06-07"
+output: html_document
+---
+
+Make an interactive dashboards with Shiny
+
+# Basic appearance
+  1. Add Island Health Logo
+  2. Separate top-level plots
+  3. Use island health guidline https://www.canva.com/design/DAEt88AGp2E/_zYlbG0FHLLbw2EwFkZLBw/view?website#2:department-wordmarks 
+  
+  
+```{r, echo=FALSE, warning=FALSE, error=FALSE, message=FALSE}
+#packages
+library(DBI)
+library(dplyr)
+library(knitr)
+library(RSQLite)
+library(ggplot2)
+library(openxlsx)
+```
+  
+# Get data
+
+Since all tables have the same schema, I have decided to combine them into one table with a 'category' column representing the disease. This will enable the comparison of the same hospital, floor, age, etc., based on the disease in a single plot. Query store in separate file
+
+```{r}
+#connect to DB
+con <- dbConnect(RSQLite::SQLite(), "Island_Health_assesment/data/infection.db")
+
+# Retrieve data
+query <- paste(readLines("Island_Health_assesment/sql_queries/all_diseases.sql"), collapse = " ")
+                   
+# Execute the query and retrieve the data
+data <- dbGetQuery(con, query) %>%
+        mutate(age = as.integer(age),
+               room = as.integer(room))
+
+global_data <<- data
+#write.csv(data, file = "data.csv", row.names = FALSE)
+```
+
+# Exploratory Data Analysis (EDA)
+```{r}
+kable(head(data))
+kable(summary(data))
+
+```
+
+
+## Insights 
+1. Unit combine hospital name and floor
+2. There are several combinations of the treatments. All combinations were used to treat CDI ( which is reasonable given its ability to develop resistance to medications)
+3. The names of the treatments are misrepresented. For instance, Flexeprazole looks similar to Omeprazole
+
+## Main plots
+1. the treatment effectiveness (as a top level dashboards)
+2. hospital usage (floor/bed loads)
+
+
+## Errors in data
+1. min age = 0 (if it is a newborn, will be better to make a separate frame with only newborns and months)
+2. Treatment = NA (I am not sure, is it "no treatment" or missed data, so I have decided to filter it as an error)
+
+```{r}
+# Calculate the sum of NA values by column
+na_sum <- colSums(is.na(data))
+print(na_sum)
+
+# Remove rows with missing values (optional)
+data <- na.omit(data)
+```
+
+
+# Hospital plots
+
+Considering that the 2nd and 4th floors experience higher traffic and activity levels, it is important to factor this into future shift planning and explore the potential for increasing the frequency of cleaning. By doing so, you can ensure that these floors receive adequate attention and maintenance to meet the higher demand and maintain cleanliness standards.
+
+```{r}
+df_count <- aggregate(patient_identifier ~ floor + bed, data, FUN = function(x) length(unique(x)))
+
+# Create the plot
+ggplot(df_count, aes(x = floor, y = patient_identifier, fill = bed)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  labs(title = "Count of Unique Patient Identifiers by Floor and Bed",
+       x = "Floor", y = "Count", fill = "Bed")
+```
+
+
+
+On all floors within the same hospital, there is a consistent proportion of negative results. This indicates that sanitation standards are likely being maintained, as any deviations would result in a higher proportion of negative results on a specific floor. It is important to focus on hospitals where the proportion of negative results exceeds 80% on a particular floor. 
+
+```{r}
+# Calculate count of unique patient identifiers by floor and result
+df_count <- data %>%
+  group_by(floor, result) %>%
+  summarise(count = n_distinct(patient_identifier)) %>%
+  ungroup() %>%
+  mutate(total_count = sum(count), 
+         proportion = count / total_count)
+
+# Create the 100% stacked bar chart
+ggplot(df_count, aes(x = floor, y = proportion, fill = result)) +
+  geom_bar(stat = "identity", position = "fill") +
+  labs(title = "Proportion of Unique Patient Identifiers by Floor and Result",
+       x = "Floor", y = "Proportion", fill = "Result")
+```
+
+
+For instance, at Goldvalley Medical Clinic, when treating MRSA, the 3rd floor exhibits a 82% proportion of negative results, while the remaining floors range from 58% to 75% in terms of negative results. This suggests the need for further investigation and potential improvement measures on those specific floors to ensure optimal treatment outcomes.
+
+```{r}
+# Calculate count of unique patient identifiers by floor and result
+df_count <- data %>%
+  filter(grepl("Goldvalley Medical Clinic", hospital) & disease == 'MRSA') %>%
+  group_by(floor, result) %>%
+  summarise(count = n_distinct(patient_identifier)) %>%
+  ungroup() %>%
+  mutate(total_count = sum(count), 
+         proportion = count / total_count)
+
+# Create the 100% stacked bar chart
+ggplot(df_count, aes(x = floor, y = proportion, fill = result)) +
+  geom_bar(stat = "identity", position = "fill") +
+  labs(title = "Proportion of MRSA results in Goldvalley Medical Clinic by floor",
+       x = "Floor", y = "Proportion", fill = "Result")
+
+```
+
+
+
+
+# Draft to idea generate
+
+Some of plots I have created in PowerBI 
+
+```{r}
+ggplot(data, aes(y = age, x = hospital)) +
+  geom_boxplot(fill = "lightblue", color = "black") +
+  coord_flip() +
+  labs(x = "Group", y = "Value", title = "Box Plot")
+```
+
+```{r}
+ggplot(data, aes(y = age, x = disease)) +
+  geom_boxplot(fill = "lightblue", color = "black") +
+  coord_flip() +
+  labs(x = "Group", y = "Value", title = "Box Plot")
+```
+
+```{r}
+ggplot(data, aes(y = age, x = treatment)) +
+  geom_boxplot(fill = "lightblue", color = "black") +
+  coord_flip() +
+  labs(x = "Group", y = "Value", title = "Box Plot")
+
+data %>% mutate(age_count = length(age)) %>% 
+  ggplot(., aes(x = treatment, y = age_count)) +
+  geom_col(fill = "lightblue", color = "black") +
+  coord_flip() +
+  labs(x = "Group", y = "Value", title = "Bar Plot")
+
+ggplot(data, aes(x = disease, y = treatment)) +
+  geom_point() +
+  labs(x = "Category 1", y = "Category 2", title = "Point Plot")
+```
+
+```{r}
+ggplot(data, aes(y = age, x = result)) +
+  geom_boxplot(fill = "lightblue", color = "black") +
+  coord_flip() +
+  labs(x = "Group", y = "Value", title = "Box Plot")
+```

@@ -11,7 +11,8 @@ ui <- dashboardPage(
   dashboardSidebar(
     sidebarMenu(
       menuItem("Treatment", tabName = "page1"),
-      menuItem("Hospitals", tabName = "page2")
+      menuItem("Hospitals", tabName = "page2"),
+      menuItem("Candidat info", tabName = "infopage")
     )
   ),
   dashboardBody(
@@ -41,6 +42,23 @@ ui <- dashboardPage(
                        p("Considering that the 2nd and 4th floors experience higher traffic and activity levels, it is important to factor this into future shift planning and explore the potential for increasing the frequency of cleaning. By doing so, you can ensure that these floors receive adequate attention and maintenance to meet the higher demand and maintain cleanliness standards."),
                        p("On all floors within the same hospital, there is a consistent proportion of negative results. This indicates that sanitation standards are likely being maintained, as any deviations would result in a higher proportion of negative results on a specific floor. It is important to focus on hospitals where the proportion of negative results exceeds 80% on a particular floor."),
                        p("For instance, at", HTML("<b>Goldvalley Medical Clinic</b>"), ", when treating ", HTML("<b>MRSA</b>"), ", the 3rd floor exhibits ", HTML("<b>a 82% proportion of negative results</b>"), ", while the remaining floors range from 58% to 75% in terms of negative results. This suggests the need for further investigation and potential improvement measures on those specific floors to ensure optimal treatment outcomes.")
+                )
+              )
+      ),
+      
+      tabItem(tabName = "infopage",
+              h2("Candidat info"),
+              fluidRow(
+                column(
+                  width = 12,
+                  style = "text-align: center;",
+                  h2("Alina Tkachenko"),
+                  tags$p("Location: Victoria, BC"),
+                  tags$p("Phone: 📞 250-986-4946"),
+                  tags$p("Email: 📧 alina.tkachenko.ca@gmail.com"),
+                  tags$p(tags$a("GitHub", href = "https://github.com/AlineCrawf")),
+                  tags$p(tags$a("GitHub project repo", href = "https://github.com/AlineCrawf/Island_health_assignment")),
+                  tags$p(tags$a("LinkedIn", href = "https://www.linkedin.com/in/alina-tkachenko-ca"))
                 )
               )
       )
